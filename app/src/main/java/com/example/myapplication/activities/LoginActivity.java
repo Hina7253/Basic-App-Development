@@ -27,14 +27,11 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        sharedPreferences.edit().clear().apply();
 
-
+        // Already logged in check
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-
         if (isLoggedIn) {
-
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
             return;
         }
@@ -64,41 +61,55 @@ public class LoginActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(email)) {
             etEmail.setError("Email required");
-            etEmail.requestFocus();
             return;
         }
         if (TextUtils.isEmpty(password)) {
             etPassword.setError("Password required");
-            etPassword.requestFocus();
             return;
         }
 
+        // 🔴🔴🔴 CHECK KARO - KYA USER REGISTERED HAI? 🔴🔴🔴
+        String registeredEmail = sharedPreferences.getString("registered_email", null);
+        String registeredPassword = sharedPreferences.getString("registered_password", null);
+
+        // Agar user registered nahi hai
+        if (registeredEmail == null) {
+            tvError.setText("❌ No account found! Please register first.");
+            tvError.setVisibility(android.view.View.VISIBLE);
+            return;
+        }
+
+        // Check email and password match
+        if (!email.equals(registeredEmail)) {
+            tvError.setText("❌ Email not found. Please register first.");
+            tvError.setVisibility(android.view.View.VISIBLE);
+            return;
+        }
+
+        if (!password.equals(registeredPassword)) {
+            tvError.setText("❌ Incorrect password. Please try again.");
+            tvError.setVisibility(android.view.View.VISIBLE);
+            return;
+        }
+
+        // ✅ Login success
         showLoading(true);
 
-        // Simulate network call
         new Handler().postDelayed(() -> {
             showLoading(false);
 
-            // Simple validation - password length 4+ means success
-            if (password.length() >= 4) {
-                // Save login info
-                String userName = email.contains("@") ? email.split("@")[0] : email;
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("isLoggedIn", true);
-                editor.putString("user_name", userName);
-                editor.putString("user_email", email);
-                editor.apply();
+            String userName = email.contains("@") ? email.split("@")[0] : email;
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("isLoggedIn", true);
+            editor.putString("user_name", userName);
+            editor.putString("user_email", email);
+            editor.apply();
 
-                Toast.makeText(LoginActivity.this, "Login Successful! 🎉", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Login Successful! 🎉", Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-
-            } else {
-                tvError.setText("Invalid credentials. Password must be at least 4 characters.");
-                tvError.setVisibility(android.view.View.VISIBLE);
-            }
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }, 1500);
     }
 

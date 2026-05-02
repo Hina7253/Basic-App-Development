@@ -60,61 +60,53 @@ public class RegisterActivity extends AppCompatActivity {
         // Validations
         if (TextUtils.isEmpty(name)) {
             etFullName.setError("Full name required");
-            etFullName.requestFocus();
             return;
         }
         if (TextUtils.isEmpty(email)) {
             etEmail.setError("Email required");
-            etEmail.requestFocus();
             return;
         }
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             etEmail.setError("Valid email required");
-            etEmail.requestFocus();
             return;
         }
-        if (TextUtils.isEmpty(mobile)) {
-            etMobile.setError("Mobile number required");
-            etMobile.requestFocus();
-            return;
-        }
-        if (mobile.length() < 10) {
+        if (TextUtils.isEmpty(mobile) || mobile.length() < 10) {
             etMobile.setError("Valid 10-digit mobile number required");
-            etMobile.requestFocus();
             return;
         }
-        if (TextUtils.isEmpty(password)) {
-            etPassword.setError("Password required");
-            etPassword.requestFocus();
-            return;
-        }
-        if (password.length() < 4) {
+        if (TextUtils.isEmpty(password) || password.length() < 4) {
             etPassword.setError("Password must be at least 4 characters");
-            etPassword.requestFocus();
             return;
         }
         if (!password.equals(confirmPassword)) {
             etConfirmPassword.setError("Passwords do not match");
-            etConfirmPassword.requestFocus();
+            return;
+        }
+
+        // Check if email already registered
+        String existingEmail = sharedPreferences.getString("registered_email", null);
+        if (existingEmail != null && existingEmail.equals(email)) {
+            tvError.setText("❌ Email already registered! Please login.");
+            tvError.setVisibility(android.view.View.VISIBLE);
             return;
         }
 
         showLoading(true);
 
-        // Simulate network delay
+        // ✅ SAVE REGISTRATION DATA
         new Handler().postDelayed(() -> {
             showLoading(false);
 
-            // Save registration info (optional)
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("registered_name", name);
             editor.putString("registered_email", email);
             editor.putString("registered_mobile", mobile);
+            editor.putString("registered_password", password);  // ✅ Password save
+            editor.putBoolean("is_registered", true);
             editor.apply();
 
             Toast.makeText(RegisterActivity.this, "Registration Successful! Please Login.", Toast.LENGTH_LONG).show();
 
-            // Go back to Login Activity
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
