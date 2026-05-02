@@ -11,8 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".activities.MainActivity" />
 
+        <!-- Login Activity (Launcher) -->
         <activity android:name=".activities.LoginActivity"
             android:exported="true">
             <intent-filter>
@@ -20,6 +20,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Register Activity -->
+        <activity android:name=".activities.RegisterActivity" />
+
+        <!-- Main Activity -->
+        <activity android:name=".activities.MainActivity" />
+
     </application>
 
 </manifest>

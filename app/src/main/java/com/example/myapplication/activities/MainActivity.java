@@ -1,88 +1,103 @@
 package com.example.myapplication.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.myapplication.R;
-import com.google.android.material.snackbar.Snackbar;
+import com.example.myapplication.adapters.CategoryAdapter;
+import com.example.myapplication.adapters.ThoughtAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView tvWelcome;
-    private RecyclerView rvData;
+    private RecyclerView rvCategories, rvThoughts;
     private Button btnLogout;
-    private ProgressBar progressBar;
     private SharedPreferences sharedPreferences;
-    private DataAdapter dataAdapter;
+    private CategoryAdapter categoryAdapter;
+    private ThoughtAdapter thoughtAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sharedPreferences = getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
 
-        // Check if logged in
-        if (!sharedPreferences.getBoolean("isLoggedIn", false)) {
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        if (!isLoggedIn) {
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
         }
 
         initViews();
+        setupRecyclerViews();
         loadUserInfo();
-        loadData();
+        loadCategories();
+        loadThoughts();
 
         btnLogout.setOnClickListener(v -> performLogout());
     }
 
     private void initViews() {
         tvWelcome = findViewById(R.id.tvWelcome);
-        rvData = findViewById(R.id.rvData);
+        rvCategories = findViewById(R.id.rvCategories);
+        rvThoughts = findViewById(R.id.rvThoughts);
         btnLogout = findViewById(R.id.btnLogout);
-        progressBar = findViewById(R.id.progressBar);
+    }
 
-        dataAdapter = new DataAdapter();
-        rvData.setLayoutManager(new LinearLayoutManager(this));
-        rvData.setAdapter(dataAdapter);
+    private void setupRecyclerViews() {
+        categoryAdapter = new CategoryAdapter();
+        rvCategories.setLayoutManager(new LinearLayoutManager(this));
+        rvCategories.setAdapter(categoryAdapter);
+
+        thoughtAdapter = new ThoughtAdapter();
+        rvThoughts.setLayoutManager(new LinearLayoutManager(this));
+        rvThoughts.setAdapter(thoughtAdapter);
+
+        // Category click listener
+        categoryAdapter.setOnCategoryClickListener(category -> {
+            Toast.makeText(this, "Opening " + category.getName(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void loadUserInfo() {
-        String userName = sharedPreferences.getString("userName", "User");
-        tvWelcome.setText("Welcome, " + userName + "! 👋");
+        String userName = sharedPreferences.getString("user_name", "User");
+        tvWelcome.setText("Welcome, " + userName + "! 🌟");
     }
 
-    private void loadData() {
-        progressBar.setVisibility(android.view.View.VISIBLE);
+    private void loadCategories() {
+        List<CategoryAdapter.CategoryItem> categories = new ArrayList<>();
+        categories.add(new CategoryAdapter.CategoryItem("1", "Inspiration", "💡", 24));
+        categories.add(new CategoryAdapter.CategoryItem("2", "Love & Relationships", "❤️", 18));
+        categories.add(new CategoryAdapter.CategoryItem("3", "Success & Goals", "🎯", 32));
+        categories.add(new CategoryAdapter.CategoryItem("4", "Peace & Mindfulness", "🧘", 15));
+        categories.add(new CategoryAdapter.CategoryItem("5", "Motivation", "🚀", 28));
+        categories.add(new CategoryAdapter.CategoryItem("6", "Learning", "📚", 21));
 
-        // Simulate loading data
-        new Handler().postDelayed(() -> {
-            progressBar.setVisibility(android.view.View.GONE);
+        categoryAdapter.setCategories(categories);
+    }
 
-            // Your data - Replace with API call later
-            List<String> dataList = new ArrayList<>();
-            dataList.add("📱 Profile Information");
-            dataList.add("💰 Recent Transactions");
-            dataList.add("⚙️ Account Settings");
-            dataList.add("🔔 Notifications");
-            dataList.add("⭐ Favorites");
-            dataList.add("📊 Statistics");
-            dataList.add("🔒 Security");
-            dataList.add("🎨 Theme Settings");
+    private void loadThoughts() {
+        List<ThoughtAdapter.ThoughtItem> thoughts = new ArrayList<>();
+        thoughts.add(new ThoughtAdapter.ThoughtItem("1", "Believe in Yourself",
+                "You are capable of amazing things. Trust your journey.", "💡 Motivation"));
+        thoughts.add(new ThoughtAdapter.ThoughtItem("2", "Small Steps",
+                "Every expert was once a beginner. Keep going!", "🚀 Inspiration"));
+        thoughts.add(new ThoughtAdapter.ThoughtItem("3", "Gratitude",
+                "Be thankful for what you have; you'll end up having more.", "🧘 Peace"));
+        thoughts.add(new ThoughtAdapter.ThoughtItem("4", "Dream Big",
+                "Don't limit your challenges. Challenge your limits.", "🎯 Success"));
 
-            dataAdapter.setData(dataList);
-        }, 1500);
+        thoughtAdapter.setThoughts(thoughts);
     }
 
     private void performLogout() {
@@ -90,11 +105,11 @@ public class MainActivity extends AppCompatActivity {
         editor.clear();
         editor.apply();
 
-        Snackbar.make(findViewById(android.R.id.content), "Logged out successfully", Snackbar.LENGTH_SHORT).show();
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
 
-        new Handler().postDelayed(() -> {
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            finish();
-        }, 1000);
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }
