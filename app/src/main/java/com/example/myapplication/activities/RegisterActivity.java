@@ -83,17 +83,9 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Check if email already registered
-        String existingEmail = sharedPreferences.getString("registered_email", null);
-        if (existingEmail != null && existingEmail.equals(email)) {
-            tvError.setText("❌ Email already registered! Please login.");
-            tvError.setVisibility(android.view.View.VISIBLE);
-            return;
-        }
-
         showLoading(true);
 
-        // ✅ SAVE REGISTRATION DATA
+        // 🔴🔴🔴 SAVE ALL DATA PROPERLY 🔴🔴🔴
         new Handler().postDelayed(() -> {
             showLoading(false);
 
@@ -101,11 +93,17 @@ public class RegisterActivity extends AppCompatActivity {
             editor.putString("registered_name", name);
             editor.putString("registered_email", email);
             editor.putString("registered_mobile", mobile);
-            editor.putString("registered_password", password);  // ✅ Password save
+            editor.putString("registered_password", password);  // ✅ IMPORTANT: Password save
             editor.putBoolean("is_registered", true);
             editor.apply();
 
-            Toast.makeText(RegisterActivity.this, "Registration Successful! Please Login.", Toast.LENGTH_LONG).show();
+            // Debug: Check if data saved
+            String savedEmail = sharedPreferences.getString("registered_email", "not found");
+            String savedPassword = sharedPreferences.getString("registered_password", "not found");
+
+            Toast.makeText(RegisterActivity.this,
+                    "Registration Successful!\nEmail: " + email + "\nPlease Login",
+                    Toast.LENGTH_LONG).show();
 
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);

@@ -68,24 +68,25 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔴🔴🔴 CHECK KARO - KYA USER REGISTERED HAI? 🔴🔴🔴
+        // 🔴🔴🔴 GET REGISTERED DATA 🔴🔴🔴
         String registeredEmail = sharedPreferences.getString("registered_email", null);
         String registeredPassword = sharedPreferences.getString("registered_password", null);
 
-        // Agar user registered nahi hai
+        // Debug: Check if any user exists
         if (registeredEmail == null) {
             tvError.setText("❌ No account found! Please register first.");
             tvError.setVisibility(android.view.View.VISIBLE);
             return;
         }
 
-        // Check email and password match
+        // Check email match
         if (!email.equals(registeredEmail)) {
             tvError.setText("❌ Email not found. Please register first.");
             tvError.setVisibility(android.view.View.VISIBLE);
             return;
         }
 
+        // Check password match
         if (!password.equals(registeredPassword)) {
             tvError.setText("❌ Incorrect password. Please try again.");
             tvError.setVisibility(android.view.View.VISIBLE);

@@ -8,7 +8,7 @@
     android:padding="24dp"
     android:background="@drawable/gradient_bg">
 
-    <!-- App Logo/Icon -->
+    <!-- App Logo -->
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="MyApp"
-        android:textSize="30sp"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
         android:layout_marginBottom="48dp"/>
@@ -31,7 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:boxBackgroundColor="#80FFFFFF">
+        app:boxBackgroundColor="#FFFFFF"
+        app:hintTextColor="#666666">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etEmail"
@@ -39,8 +40,8 @@
             android:layout_height="wrap_content"
             android:hint="Email Address"
             android:inputType="textEmailAddress"
-            android:textColor="@android:color/white"
-            android:textColorHint="#B3FFFFFF"/>
+            android:textColor="@android:color/black"
+            android:textColorHint="#999999"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Password Input -->
@@ -50,8 +51,9 @@
         android:layout_marginBottom="24dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@android:color/white"
-        app:boxBackgroundColor="#80FFFFFF">
+        app:passwordToggleTint="#666666"
+        app:boxBackgroundColor="#FFFFFF"
+        app:hintTextColor="#666666">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
@@ -59,8 +61,8 @@
             android:layout_height="wrap_content"
             android:hint="Password"
             android:inputType="textPassword"
-            android:textColor="@android:color/white"
-            android:textColorHint="#B3FFFFFF"/>
+            android:textColor="@android:color/black"
+            android:textColorHint="#999999"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Login Button -->
@@ -71,47 +73,49 @@
         android:text="Login"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:backgroundTint="@android:color/white"
-        android:textColor="@android:color/black"/>
+        android:backgroundTint="#6366F1"
+        android:textColor="@android:color/white"/>
 
     <!-- Loading Progress -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:visibility="gone"/>
+
+    <!-- Register Link -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Don't have an account? "
+            android:textColor="#CCCCCC"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tvRegisterLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
 
     <!-- Error Message -->
     <TextView
         android:id="@+id/tvError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:textColor="#FFCCCC"
         android:textSize="14sp"
         android:visibility="gone"/>
-
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:orientation="horizontal">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Don't have an account? "
-        android:textColor="#CCCCCC"
-        android:textSize="14sp"/>
-
-    <TextView
-        android:id="@+id/tvRegisterLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Register"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold"/>
-
 
 </LinearLayout>
