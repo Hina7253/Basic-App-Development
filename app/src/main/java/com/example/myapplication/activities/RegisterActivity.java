@@ -19,14 +19,14 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private ProgressBar progressBar;
     private TextView tvError, tvLoginLink;
-    private SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+
         initViews();
 
         btnRegister.setOnClickListener(v -> performRegister());
@@ -85,30 +85,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         showLoading(true);
 
-        // 🔴🔴🔴 SAVE ALL DATA PROPERLY 🔴🔴🔴
-        new Handler().postDelayed(() -> {
-            showLoading(false);
 
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("registered_name", name);
-            editor.putString("registered_email", email);
-            editor.putString("registered_mobile", mobile);
-            editor.putString("registered_password", password);  // ✅ IMPORTANT: Password save
-            editor.putBoolean("is_registered", true);
-            editor.apply();
-
-            // Debug: Check if data saved
-            String savedEmail = sharedPreferences.getString("registered_email", "not found");
-            String savedPassword = sharedPreferences.getString("registered_password", "not found");
-
-            Toast.makeText(RegisterActivity.this,
-                    "Registration Successful!\nEmail: " + email + "\nPlease Login",
-                    Toast.LENGTH_LONG).show();
-
-            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }, 1500);
     }
 
     private void showLoading(boolean show) {
