@@ -19,22 +19,14 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private ProgressBar progressBar;
     private TextView tvError, tvRegisterLink;
-    private SharedPreferences sharedPreferences;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
 
-        // Already logged in check
-        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-        if (isLoggedIn) {
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-            return;
-        }
 
         initViews();
 

@@ -1,5 +1,14 @@
 package com.example.myapplication.activities;
 
+import com.example.myapplication.network.ApiService;
+import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.models.RegisterRequest;
+import com.example.myapplication.models.RegisterResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.models.RegisterResponse;
+
+import retrofit2.Call;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -84,6 +96,45 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         showLoading(true);
+
+// API CALL START
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+
+        RegisterRequest request = new RegisterRequest(name, mobile, password);
+
+        apiService.registerUser(request).enqueue(new Callback<RegisterResponse>() {
+            @Override
+            public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+
+                showLoading(false);
+
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+
+                    Toast.makeText(RegisterActivity.this,
+                            response.body().getMessage(),
+                            Toast.LENGTH_LONG).show();
+
+                    // Go to login
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                } else {
+                    tvError.setText("Registration Failed");
+                    tvError.setVisibility(android.view.View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RegisterResponse> call, Throwable t) {
+
+                showLoading(false);
+
+                tvError.setText("Error: " + t.getMessage());
+                tvError.setVisibility(android.view.View.VISIBLE);
+            }
+        });
+
 
 
     }

@@ -32,6 +32,9 @@ public interface ApiService {
     // Logout
     @POST("api/logout")
     Call<LoginResponse> logout(@Header("Authorization") String token);
+
+    Call<RegisterResponse> registerUser(RegisterRequest request);
+
 }
 
 class CategoryResponse {

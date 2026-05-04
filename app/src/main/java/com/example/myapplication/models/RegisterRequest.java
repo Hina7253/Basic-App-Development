@@ -6,7 +6,7 @@ public class RegisterRequest {
     private String mobile;
     private String password;
 
-    public RegisterRequest(String name, String email, String mobile, String password) {
+    public RegisterRequest(String name, String email, String mobile) {
         this.name = name;
         this.email = email;
         this.mobile = mobile;
