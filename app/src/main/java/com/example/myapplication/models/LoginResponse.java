@@ -1,17 +1,18 @@
 package com.example.myapplication.models;
 
 public class LoginResponse {
-    private boolean success;
-    private String message;
-    private String token;      // API key / Token
-    private User user;
 
-    public boolean isSuccess() { return success; }
-    public void setSuccess(boolean success) { this.success = success; }
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public boolean success;
+    public String message;
+    public Result result;
+
+    public static class Result {
+        public String id;
+        public String name;
+        public String phoneNumber;
+        public String role;
+        public String accessToken;
+        public String refreshToken;
+        public String refreshTokenExpiryTime;
+    }
 }

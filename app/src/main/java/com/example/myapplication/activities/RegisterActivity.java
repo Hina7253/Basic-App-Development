@@ -1,5 +1,18 @@
 package com.example.myapplication.activities;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.myapplication.R;
 import com.example.myapplication.network.ApiService;
 import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.models.RegisterRequest;
@@ -9,22 +22,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.text.TextUtils;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
-import com.example.myapplication.R;
-import com.example.myapplication.models.RegisterResponse;
-
-import retrofit2.Call;
-
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText etFullName, etEmail, etMobile, etPassword, etConfirmPassword;
@@ -32,20 +29,17 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView tvError, tvLoginLink;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
 
         initViews();
 
         btnRegister.setOnClickListener(v -> performRegister());
 
         tvLoginLink.setOnClickListener(v -> {
-            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             finish();
         });
     }
@@ -64,7 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void performRegister() {
         String name = etFullName.getText().toString().trim();
-        String email = etEmail.getText().toString().trim();
+        String email = etEmail.getText().toString().trim(); // Only for validation
         String mobile = etMobile.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
@@ -97,9 +91,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         showLoading(true);
 
-// API CALL START
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-
         RegisterRequest request = new RegisterRequest(name, mobile, password);
 
         apiService.registerUser(request).enqueue(new Callback<RegisterResponse>() {
@@ -108,20 +100,18 @@ public class RegisterActivity extends AppCompatActivity {
 
                 showLoading(false);
 
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                if (response.isSuccessful() && response.body() != null && response.body().success) {
 
                     Toast.makeText(RegisterActivity.this,
-                            response.body().getMessage(),
+                            response.body().message,
                             Toast.LENGTH_LONG).show();
 
-                    // Go to login
-                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                     finish();
 
                 } else {
                     tvError.setText("Registration Failed");
-                    tvError.setVisibility(android.view.View.VISIBLE);
+                    tvError.setVisibility(View.VISIBLE);
                 }
             }
 
@@ -131,16 +121,13 @@ public class RegisterActivity extends AppCompatActivity {
                 showLoading(false);
 
                 tvError.setText("Error: " + t.getMessage());
-                tvError.setVisibility(android.view.View.VISIBLE);
+                tvError.setVisibility(View.VISIBLE);
             }
         });
-
-
-
     }
 
     private void showLoading(boolean show) {
-        progressBar.setVisibility(show ? android.view.View.VISIBLE : android.view.View.GONE);
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         btnRegister.setEnabled(!show);
         btnRegister.setText(show ? "Registering..." : "Register");
     }

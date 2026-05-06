@@ -35,6 +35,8 @@ public interface ApiService {
 
     Call<RegisterResponse> registerUser(RegisterRequest request);
 
+    Call<LoginResponse> loginUser(LoginRequest request);
+
 }
 
 class CategoryResponse {

@@ -3,15 +3,25 @@ package com.example.myapplication.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.myapplication.R;
+import com.example.myapplication.network.ApiService;
+import com.example.myapplication.network.RetrofitClient;
+import com.example.myapplication.models.LoginRequest;
+import com.example.myapplication.models.LoginResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -20,21 +30,17 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView tvError, tvRegisterLink;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-
 
         initViews();
 
         btnLogin.setOnClickListener(v -> performLogin());
 
         tvRegisterLink.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
     }
 
@@ -48,66 +54,65 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void performLogin() {
-        String email = etEmail.getText().toString().trim();
+
+        String phone = etEmail.getText().toString().trim(); // using this as phone
         String password = etPassword.getText().toString().trim();
 
-        if (TextUtils.isEmpty(email)) {
-            etEmail.setError("Email required");
+        if (TextUtils.isEmpty(phone)) {
+            etEmail.setError("Mobile number required");
             return;
         }
+
         if (TextUtils.isEmpty(password)) {
             etPassword.setError("Password required");
             return;
         }
 
-        // 🔴🔴🔴 GET REGISTERED DATA 🔴🔴🔴
-        String registeredEmail = sharedPreferences.getString("registered_email", null);
-        String registeredPassword = sharedPreferences.getString("registered_password", null);
-
-        // Debug: Check if any user exists
-        if (registeredEmail == null) {
-            tvError.setText("❌ No account found! Please register first.");
-            tvError.setVisibility(android.view.View.VISIBLE);
-            return;
-        }
-
-        // Check email match
-        if (!email.equals(registeredEmail)) {
-            tvError.setText("❌ Email not found. Please register first.");
-            tvError.setVisibility(android.view.View.VISIBLE);
-            return;
-        }
-
-        // Check password match
-        if (!password.equals(registeredPassword)) {
-            tvError.setText("❌ Incorrect password. Please try again.");
-            tvError.setVisibility(android.view.View.VISIBLE);
-            return;
-        }
-
-        // ✅ Login success
         showLoading(true);
 
-        new Handler().postDelayed(() -> {
-            showLoading(false);
+        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
+        LoginRequest request = new LoginRequest(phone, password);
 
-            String userName = email.contains("@") ? email.split("@")[0] : email;
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("isLoggedIn", true);
-            editor.putString("user_name", userName);
-            editor.putString("user_email", email);
-            editor.apply();
+        apiService.loginUser(request).enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
 
-            Toast.makeText(LoginActivity.this, "Login Successful! 🎉", Toast.LENGTH_SHORT).show();
+                showLoading(false);
 
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }, 1500);
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+
+                    String token = response.body().result.accessToken;
+
+                    // Save token
+                    SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
+                    prefs.edit().putString("TOKEN", token).apply();
+
+                    Toast.makeText(LoginActivity.this,
+                            "Login Successful",
+                            Toast.LENGTH_SHORT).show();
+
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    finish();
+
+                } else {
+                    tvError.setText("Invalid credentials");
+                    tvError.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+
+                showLoading(false);
+
+                tvError.setText("Error: " + t.getMessage());
+                tvError.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void showLoading(boolean show) {
-        progressBar.setVisibility(show ? android.view.View.VISIBLE : android.view.View.GONE);
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         btnLogin.setEnabled(!show);
         btnLogin.setText(show ? "Logging in..." : "Login");
     }

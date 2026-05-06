@@ -40,9 +40,7 @@ public class RetrofitClient {
         return instance;
     }
 
-    public static jdk.internal.access.JavaNetUriAccess getClient() {
-        return null;
-    }
+
 
     public ApiService getApiService() {
         return apiService;
