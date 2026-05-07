@@ -14,10 +14,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
-import com.example.myapplication.network.ApiService;
-import com.example.myapplication.network.RetrofitClient;
 import com.example.myapplication.models.LoginRequest;
 import com.example.myapplication.models.LoginResponse;
+import com.example.myapplication.network.ApiService;
+import com.example.myapplication.network.RetrofitClient;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +25,7 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText etEmail, etPassword;
+    private EditText etPhone, etPassword;
     private Button btnLogin;
     private ProgressBar progressBar;
     private TextView tvError, tvRegisterLink;
@@ -40,80 +40,167 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> performLogin());
 
         tvRegisterLink.setOnClickListener(v -> {
-            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+
+            startActivity(
+                    new Intent(LoginActivity.this,
+                            RegisterActivity.class)
+            );
         });
     }
 
     private void initViews() {
-        etEmail = findViewById(R.id.etEmail);
+
+        etPhone = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
+
         btnLogin = findViewById(R.id.btnLogin);
+
         progressBar = findViewById(R.id.progressBar);
+
         tvError = findViewById(R.id.tvError);
+
         tvRegisterLink = findViewById(R.id.tvRegisterLink);
     }
 
     private void performLogin() {
 
-        String phone = etEmail.getText().toString().trim(); // using this as phone
-        String password = etPassword.getText().toString().trim();
+        tvError.setVisibility(View.GONE);
 
+        String phone =
+                etPhone.getText().toString().trim();
+
+        String password =
+                etPassword.getText().toString().trim();
+
+        // Validation
         if (TextUtils.isEmpty(phone)) {
-            etEmail.setError("Mobile number required");
+
+            etPhone.setError("Phone number required");
+            return;
+        }
+
+        if (phone.length() != 10) {
+
+            etPhone.setError("Enter valid 10 digit number");
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
+
             etPassword.setError("Password required");
             return;
         }
 
         showLoading(true);
 
-        ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
-        LoginRequest request = new LoginRequest(phone, password);
+        ApiService apiService =
+                RetrofitClient.getClient()
+                        .create(ApiService.class);
 
-        apiService.loginUser(request).enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+        LoginRequest request =
+                new LoginRequest(phone, password);
 
-                showLoading(false);
+        apiService.login(request)
+                .enqueue(new Callback<LoginResponse>() {
 
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    @Override
+                    public void onResponse(
+                            Call<LoginResponse> call,
+                            Response<LoginResponse> response) {
 
-                    String token = response.body().result.accessToken;
+                        showLoading(false);
 
-                    // Save token
-                    SharedPreferences prefs = getSharedPreferences("MyApp", MODE_PRIVATE);
-                    prefs.edit().putString("TOKEN", token).apply();
+                        if (response.isSuccessful()
+                                && response.body() != null) {
 
-                    Toast.makeText(LoginActivity.this,
-                            "Login Successful",
-                            Toast.LENGTH_SHORT).show();
+                            LoginResponse loginResponse =
+                                    response.body();
 
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
+                            if (loginResponse.success) {
 
-                } else {
-                    tvError.setText("Invalid credentials");
-                    tvError.setVisibility(View.VISIBLE);
-                }
-            }
+                                String token = "";
 
-            @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                                if (loginResponse.result != null) {
 
-                showLoading(false);
+                                    token =
+                                            loginResponse.result.accessToken;
+                                }
 
-                tvError.setText("Error: " + t.getMessage());
-                tvError.setVisibility(View.VISIBLE);
-            }
-        });
+                                // Save token
+                                SharedPreferences prefs =
+                                        getSharedPreferences(
+                                                "MyApp",
+                                                MODE_PRIVATE
+                                        );
+
+                                prefs.edit()
+                                        .putString("TOKEN", token)
+                                        .putBoolean("isLoggedIn", true)
+                                        .putString("user_name", loginResponse.result.name)
+                                        .apply();
+
+                                Toast.makeText(
+                                        LoginActivity.this,
+                                        "Login Successful",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                startActivity(
+                                        new Intent(
+                                                LoginActivity.this,
+                                                MainActivity.class
+                                        )
+                                );
+
+                                finish();
+
+                            } else {
+
+                                tvError.setText(
+                                        loginResponse.message
+                                );
+
+                                tvError.setVisibility(View.VISIBLE);
+                            }
+
+                        } else {
+
+                            tvError.setText(
+                                    "Server Error : "
+                                            + response.code()
+                            );
+
+                            tvError.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            Call<LoginResponse> call,
+                            Throwable t) {
+
+                        showLoading(false);
+
+                        tvError.setText(
+                                "Network Error : "
+                                        + t.getMessage()
+                        );
+
+                        tvError.setVisibility(View.VISIBLE);
+                    }
+                });
     }
 
     private void showLoading(boolean show) {
-        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+
+        progressBar.setVisibility(
+                show ? View.VISIBLE : View.GONE
+        );
+
         btnLogin.setEnabled(!show);
-        btnLogin.setText(show ? "Logging in..." : "Login");
+
+        btnLogin.setText(
+                show ? "Logging in..." : "Login"
+        );
     }
 }

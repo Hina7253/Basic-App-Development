@@ -1,52 +1,21 @@
 package com.example.myapplication.network;
 
-import com.example.myapplication.models.*;
+import com.example.myapplication.models.LoginRequest;
+import com.example.myapplication.models.LoginResponse;
+import com.example.myapplication.models.RegisterRequest;
+import com.example.myapplication.models.RegisterResponse;
+
 import retrofit2.Call;
-import retrofit2.http.*;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
 
 public interface ApiService {
 
-    // Login
-    @POST("api/login")
-    Call<LoginResponse> login(@Body LoginRequest request);
-
-    // Register
-    @POST("api/register")
+    // REGISTER API
+    @POST("api/Auth/student/register")
     Call<RegisterResponse> register(@Body RegisterRequest request);
 
-    // Get Categories
-    @GET("api/categories")
-    Call<CategoryResponse> getCategories(@Header("Authorization") String token);
-
-    // Get Thoughts by Category
-    @GET("api/thoughts/{categoryId}")
-    Call<ThoughtResponse> getThoughtsByCategory(
-            @Header("Authorization") String token,
-            @Path("categoryId") String categoryId
-    );
-
-    // Get Featured Thoughts
-    @GET("api/featured")
-    Call<ThoughtResponse> getFeaturedThoughts(@Header("Authorization") String token);
-
-    // Logout
-    @POST("api/logout")
-    Call<LoginResponse> logout(@Header("Authorization") String token);
-
-    Call<RegisterResponse> registerUser(RegisterRequest request);
-
-    Call<LoginResponse> loginUser(LoginRequest request);
-
-}
-
-class CategoryResponse {
-    public boolean success;
-    public java.util.List<Category> data;
-    public String message;
-}
-
-class ThoughtResponse {
-    public boolean success;
-    public java.util.List<Thought> data;
-    public String message;
+    // LOGIN API
+    @POST("api/Auth/student/login")
+    Call<LoginResponse> login(@Body LoginRequest request);
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,11 +14,13 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@android:color/transparent"
         app:title="InspireHub"
-        app:titleTextColor="@android:color/white"/>
+        app:titleCentered="true"
+        app:titleTextColor="@android:color/white" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,7 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="16dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="8dp"
                 app:cardBackgroundColor="#FFFFFF">
 
@@ -38,73 +41,79 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="22dp">
 
                     <TextView
                         android:id="@+id/tvWelcome"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Welcome!"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"/>
+                        android:text="Welcome, Hina 👋"
+                        android:textColor="@android:color/black"
+                        android:textSize="26sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Discover inspiring thoughts &amp; ideas"
-                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:text="Discover inspiring thoughts and ideas"
                         android:textColor="#666666"
-                        android:layout_marginTop="8dp"/>
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Categories Section -->
+            <!-- Categories -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:text="📁 Categories"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:layout_marginBottom="12dp"/>
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCategories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginBottom="24dp"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_category" />
 
-            <!-- Featured Thoughts Section -->
+            <!-- Thoughts -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:text="✨ Featured Thoughts"
-                android:textSize="20sp"
-                android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:layout_marginBottom="12dp"/>
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvThoughts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginBottom="24dp"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_thought" />
 
-
-            <Button
+            <!-- Logout Button -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogout"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="32dp"
                 android:text="🚪 Logout"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:backgroundTint="#FF4444"
-                android:textColor="@android:color/white"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="32dp"/>
+                app:backgroundTint="#FF4B4B"
+                app:cornerRadius="14dp" />
 
         </LinearLayout>
 

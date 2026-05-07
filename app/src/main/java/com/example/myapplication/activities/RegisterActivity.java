@@ -94,23 +94,23 @@ public class RegisterActivity extends AppCompatActivity {
         ApiService apiService = RetrofitClient.getClient().create(ApiService.class);
         RegisterRequest request = new RegisterRequest(name, mobile, password);
 
-        apiService.registerUser(request).enqueue(new Callback<RegisterResponse>() {
+        apiService.register(request).enqueue(new Callback<RegisterResponse>() {
             @Override
             public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
 
                 showLoading(false);
 
-                if (response.isSuccessful() && response.body() != null && response.body().success) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
 
                     Toast.makeText(RegisterActivity.this,
-                            response.body().message,
+                            response.body().getMessage(),
                             Toast.LENGTH_LONG).show();
 
                     startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                     finish();
 
                 } else {
-                    tvError.setText("Registration Failed");
+                    tvError.setText(response.message());
                     tvError.setVisibility(View.VISIBLE);
                 }
             }

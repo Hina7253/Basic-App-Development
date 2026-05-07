@@ -1,21 +1,27 @@
 package com.example.myapplication.models;
 
 public class RegisterRequest {
+
     private String name;
-    private String email;
-    private String mobile;
+    private String phoneNumber;
     private String password;
 
-    public RegisterRequest(String name, String email, String mobile) {
+    public RegisterRequest(String name, String phoneNumber, String password) {
+
         this.name = name;
-        this.email = email;
-        this.mobile = mobile;
+        this.phoneNumber = phoneNumber;
         this.password = password;
     }
 
-    // Getters
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getMobile() { return mobile; }
-    public String getPassword() { return password; }
+    public String getName() {
+        return name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }
